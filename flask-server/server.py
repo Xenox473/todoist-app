@@ -32,11 +32,11 @@ def task(task_id):
     api.sync()
     success_count = []
     logs = []
-    page = 4
+    page = 30
     for i in range(page):
         logs += api.activity.get(object_type = "item", object_id = task_id, event_type = "completed", page=i)['events']
     completion_dates = [log['event_date'] for log in logs]
-    completion_dates = list(map(lambda x: parser.parse(x), completion_dates))
+    completion_dates = list(map(lambda x: parser.parse(x) , completion_dates))
     completion_dates.sort()
 
     counts = []
@@ -49,7 +49,9 @@ def task(task_id):
         else:
             counter = 1
         counts.append(counter)
-    return {'dates': completion_dates, 'streak': counts}
+
+    result = [{'day': completion_dates[i].strftime('%Y-%m-%d'), 'value': counts[i]} for i in range(len(completion_dates))]
+    return {'completion_dates': result}
 
 if __name__ == '__main__':
     app.run(debug=True)

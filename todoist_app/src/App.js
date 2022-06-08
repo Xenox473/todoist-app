@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import React, { useState, useEffect } from 'react';
+import { ResponsiveCalendar } from '@nivo/calendar';
 
 const App = () => {
   const [data, setData] = useState([{}]);
-  const [activeTask, setActiveTask] = useState({});
+  const [activeTask, setActiveTask] = useState(null);
 
   useEffect(() => {
     fetch('/habits').then(
@@ -11,7 +12,6 @@ const App = () => {
     ).then(
       (response) => {
         setData(response);
-        console.log(response);
       },
     );
   }, []);
@@ -22,12 +22,13 @@ const App = () => {
     ).then(
       (response) => {
         setActiveTask(response);
-        console.log(response);
       },
     );
   };
 
-  // if (typeof(data?.tasks) === 'undefined') return <p>Loading...</p>;
+  const dates = activeTask?.completion_dates?.map((date) => new Date(date.day));
+  const minDate = dates && Math.min(...dates);
+  const maxDate = dates && Math.max(...dates);
 
   return (
     <div>
@@ -42,6 +43,37 @@ const App = () => {
           </li>
         </ul>
       ))}
+      {!!activeTask?.completion_dates?.length && (
+        <div style={{ height: '400px' }}>
+          <ResponsiveCalendar
+            data={activeTask?.completion_dates}
+            from={minDate}
+            to={maxDate}
+            emptyColor="#EEEEEE"
+            colors={['#F7B2B7', '#F7717D', '#DE639A', '#F7B2B7']}
+            margin={{
+              top: 40, right: 40, bottom: 40, left: 40
+            }}
+            yearSpacing={25}
+            yearLegendPosition="after"
+            monthBorderColor="#ffffff"
+            dayBorderWidth={2}
+            dayBorderColor="#ffffff"
+            legends={[
+              {
+                anchor: 'bottom-right',
+                direction: 'row',
+                translateY: 36,
+                itemCount: 4,
+                itemWidth: 42,
+                itemHeight: 36,
+                itemsSpacing: 14,
+                itemDirection: 'right-to-left'
+              }
+            ]}
+          />
+        </div>
+      )}
     </div>
   );
 };
