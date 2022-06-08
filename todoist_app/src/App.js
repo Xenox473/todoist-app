@@ -35,8 +35,8 @@ const App = () => {
       {data?.tasks?.map((task) => (
         <ul>
           <li key={task}>
-            <button type="button" onClick={() => fetchTask(task[1])}>
-              {task[0]}
+            <button type="button" onClick={() => fetchTask(task.id)}>
+              {task.name}
               {' '}
             </button>
           </li>
