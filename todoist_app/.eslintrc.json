@@ -19,6 +19,8 @@
     ],
     "rules": {
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-        "comma-dangle": ["off", "ignore"]
+        "comma-dangle": ["off", "ignore"],
+        "react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
+        "no-unused-vars": ["warn"]
     }
 }
