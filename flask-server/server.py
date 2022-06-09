@@ -1,22 +1,30 @@
+from audioop import cross
 from flask import Flask
 import todoist
 import os
 from datetime import datetime, timedelta
 from dateutil import parser
+from flask_cors import CORS, cross_origin
 
 #initialize app
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./todoist_app/build', static_url_path='')
+CORS(app)
 
-def get_habits(api, page=4):
+def get_habits(api):
     print("getting habits")
-    completed_activities = api.activity.get(event_type = "completed")
     habit_label = list(filter(lambda x: x['name'] == 'Habit', api.labels.all()))[0]
     habits = list(map(lambda x: {'name': x['content'], 'id': x['id']}, list(filter(lambda x: habit_label['id'] in x['labels'], api.items.all()))))
 
     return habits
 
+@app.route('/')
+@cross_origin()
+def serve():
+    return send_from_directory(app.static_folder, 'App.js')
+
 #Tasks API
 @app.route('/habits', methods=['GET'])
+@cross_origin()
 def habits():
     api_key = os.environ.get('TODOIST_API_KEY')
     api = todoist.TodoistAPI(api_key)
@@ -26,13 +34,14 @@ def habits():
 
 #Tasks API
 @app.route('/task/<task_id>', methods=['GET'])
+@cross_origin()
 def task(task_id):
     api_key = os.environ.get('TODOIST_API_KEY')
     api = todoist.TodoistAPI(api_key)
     api.sync()
     success_count = []
     logs = []
-    page = 30
+    page = 10
     for i in range(page):
         logs += api.activity.get(object_type = "item", object_id = task_id, event_type = "completed", page=i)['events']
     completion_dates = [log['event_date'] for log in logs]
