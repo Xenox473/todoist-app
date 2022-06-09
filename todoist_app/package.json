@@ -2,7 +2,7 @@
   "name": "todoist_app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "https://boiling-lowlands-93008.herokuapp.com/",
   "dependencies": {
     "@nivo/calendar": "^0.79.1",
     "@nivo/colors": "^0.79.1",
