@@ -5,12 +5,13 @@ import os
 from datetime import datetime, timedelta
 from dateutil import parser
 from flask_cors import CORS, cross_origin
+from typing import List, Dict
 
 #initialize app
 app = Flask(__name__, static_folder='todoist_app/build', static_url_path='')
 CORS(app)
 
-def get_habits(api):
+def get_habits(api) -> List:
     print("getting habits")
     habit_label = list(filter(lambda x: x['name'] == 'Habit', api.labels.all()))[0]
     habits = list(map(lambda x: {'name': x['content'], 'id': x['id']}, list(filter(lambda x: habit_label['id'] in x['labels'], api.items.all()))))
@@ -25,7 +26,7 @@ def serve():
 #Tasks API
 @app.route('/habits', methods=['GET'])
 @cross_origin()
-def habits():
+def habits() -> Dict[str, List]:
     api_key = os.environ.get('TODOIST_API_KEY')
     api = todoist.TodoistAPI(api_key)
     api.sync()
@@ -35,7 +36,7 @@ def habits():
 #Tasks API
 @app.route('/task/<task_id>', methods=['GET'])
 @cross_origin()
-def task(task_id):
+def task(task_id) -> Dict[str, List[Dict]]:
     api_key = os.environ.get('TODOIST_API_KEY')
     api = todoist.TodoistAPI(api_key)
     api.sync()
